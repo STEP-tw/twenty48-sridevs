@@ -1,22 +1,38 @@
 (ns twenty48.core
   (:gen-class))
 
-(defn move-grid-right
-  "Moves an entire grid to the right"
-  [grid]
-  grid)
+(def not-zero? (comp not zero?))
 
-(defn move-grid-left
-  "Moves an entire grid to the left"
-  [grid]
-  grid)
+(def shift-left-zeroes (partial sort-by not-zero?))
 
-(defn move-grid-down
-  "Moves an entire grid down"
-  [grid]
-  grid)
+(def split-identical (partial partition-by identity))
 
-(defn move-grid-up
-  "Moves an entire grid up"
-  [grid]
-  grid)
+(def pair-up (comp reverse (partial partition-all 2)))
+
+(def groupify (partial mapcat pair-up))
+
+(def ordered-pairs (comp groupify split-identical shift-left-zeroes))
+
+(def sum (partial reduce +))
+
+(def sum-up (partial map sum))
+
+(def prepend-zeroes (partial concat `(0 0 0 0)))
+
+(def take-last-4 (partial take-last 4))
+
+(def move-row-right (comp take-last-4 prepend-zeroes sum-up ordered-pairs))
+
+(def move-row-left (comp reverse move-row-right reverse))
+
+(def move-grid-right (partial map move-row-right))
+
+(def move-grid-left (partial map move-row-left))
+
+(def map-through (partial map list))
+
+(def tilt (partial apply map-through))
+
+(def move-grid-down (comp tilt move-grid-right tilt))
+
+(def move-grid-up (comp tilt move-grid-left tilt))
